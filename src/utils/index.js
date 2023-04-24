@@ -27,6 +27,7 @@ const formatConversation = async eimConversation => {
     avatar,
     isGroup,
     index: isGroup ? '我的群组' : '单聊',
+    chatType: eimConversation.chatType,
     unread: unReadCount,
     lastSendTime: lastMessage.time,
     lastContent: formatLastContent(lastMessage)
@@ -58,8 +59,8 @@ const getConversationInfo = async conversation => {
 function getConversationIdByChannelId (id) {
   if (typeof id !== 'string') return ''
   return (
-    id.match(/support_(\S*)@|support_(\S*)/)[1] ||
-    id.match(/support_(\S*)@|support_(\S*)/)[2]
+    id.match(/sdk111_(\S*)@|sdk111_(\S*)/)[1] ||
+    id.match(/sdk111_(\S*)@|sdk111_(\S*)/)[2]
   )
 }
 

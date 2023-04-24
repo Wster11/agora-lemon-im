@@ -77,22 +77,14 @@ const generateRandWord = () => {
     .toString(36)
     .substr(2)
 }
-const generateMessage = (toContactId = '', fromUser) => {
-  if (!fromUser) {
-    fromUser = {
-      id: 'system',
-      displayName: '系统测试',
-      avatar: 'http://upload.qqbodys.com/allimg/1710/1035512943-0.jpg'
-    }
-  }
+const generateMessage = (toContactId = '', fromUser, msgInfo) => {
+  const { id, time, msg } = msgInfo
   return {
-    id: generateRandId(),
+    id: id,
     status: 'succeed',
     type: 'text',
-    sendTime: getTime(),
-    content: generateRandWord(),
-    // fileSize: 1231,
-    // fileName: "asdasd.doc",
+    sendTime: time,
+    content: msg,
     toContactId,
     fromUser
   }
@@ -101,6 +93,7 @@ export default {
   name: 'app',
   data () {
     return {
+      historyMessageCursor: {},
       theme: 'default',
       contactContextmenu: [
         {
@@ -235,10 +228,6 @@ export default {
   mounted () {
     this.imLogin()
     const { IMUI } = this.$refs
-    setTimeout(() => {
-      IMUI.changeContact('contact-1')
-    }, 500)
-
     IMUI.setLastContentRender('event', message => {
       return `[自定义通知内容]`
     })
@@ -348,10 +337,10 @@ export default {
       this.$EIM
         .open({
           user: id,
-          pwd: '1'
+          pwd: 'sttest'
         })
         .then(() => {
-          this.$EIM.fetchUserInfoById(id).then((res) => {
+          this.$EIM.fetchUserInfoById(id).then(res => {
             this.user = {
               id,
               displayName: res.data[id].nickname,
@@ -364,10 +353,12 @@ export default {
     async getConversationList () {
       const { IMUI } = this.$refs
       let res = await this.$EIM.getConversationlist()
-      let contacts = await Promise.all(res.data.channel_infos.map(async item => {
-        let res = await formatConversation(item)
-        return res
-      }))
+      let contacts = await Promise.all(
+        res.data.channel_infos.map(async item => {
+          let res = await formatConversation(item)
+          return res
+        })
+      )
       IMUI.initContacts(contacts)
     },
     changeTheme () {
@@ -528,36 +519,52 @@ export default {
       }, 1000)
     },
     handlePullMessages (contact, next, instance) {
-      console.log(contact, next, instance)
-      const otheruser = {
-        id: contact.id,
-        displayName: contact.displayName,
-        avatar: contact.avatar
-      }
-      setTimeout(() => {
-        const messages = [
-          generateMessage(instance.currentContactId, this.user),
-          generateMessage(instance.currentContactId, otheruser),
-          generateMessage(instance.currentContactId, this.user),
-          generateMessage(instance.currentContactId, otheruser),
-          generateMessage(instance.currentContactId, this.user),
-          generateMessage(instance.currentContactId, this.user),
-          generateMessage(instance.currentContactId, otheruser),
-          {
-            ...generateMessage(instance.currentContactId, this.user),
-            ...{ status: 'failed' }
-          }
-        ]
-        let isEnd = false
-        if (
-          instance.getMessages(instance.currentContactId).length +
-            messages.length >
-          11
-        ) {
-          isEnd = true
+      next()
+      if (contact.id) {
+        let cursor = this.historyMessageCursor[contact.id]
+        if (cursor !== false) {
+          this.$EIM
+            .getHistoryMessages({
+              chatType: contact.chatType,
+              targetId: contact.id,
+              pageSize: 20,
+              cursor
+            })
+            .then(res => {
+              this.$set(
+                this.historyMessageCursor,
+                contact.id,
+                res.cursor || false
+              )
+              let msgs = res.messages
+                .map(msg => {
+                  let current = instance.contacts.find(contact => {
+                    return contact.id === msg.from
+                  })
+                  let msgFrom = {
+                    id: msg.from,
+                    displayName: current.displayName || msg.from,
+                    avatar: current.avatar || ''
+                  }
+                  return generateMessage(
+                    instance.currentContactId,
+                    msgFrom,
+                    msg
+                  )
+                })
+                .reverse()
+              let isEnd = false
+              if (msgs.length < 20) {
+                isEnd = true
+              }
+              if (!res.cursor) {
+                isEnd = true
+              }
+
+              next(msgs, isEnd)
+            })
         }
-        next(messages, isEnd)
-      }, 500)
+      }
     },
     handleChangeMenu () {
       console.log('Event:change-menu')

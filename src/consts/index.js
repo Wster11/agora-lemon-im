@@ -3,6 +3,6 @@ const CHAT_TYPE = {
   groupChat: 'groupChat'
 }
 
-const APPKEY = 'easemob-demo#support'
+const APPKEY = 'easemob-demo#sdk111'
 
 export { CHAT_TYPE, APPKEY }
