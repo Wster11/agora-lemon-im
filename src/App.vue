@@ -62,6 +62,7 @@
 <script>
 import packageData from '../package.json'
 import EmojiData from './database/emoji'
+import { formatConversation } from './utils/index'
 
 const getTime = () => {
   return new Date().getTime()
@@ -228,49 +229,11 @@ export default {
       hideMenu: false,
       hideMessageName: false,
       hideMessageTime: true,
-      user: {
-        id: '1',
-        displayName: 'June',
-        avatar: ''
-      }
+      user: {}
     }
   },
   mounted () {
-    const contactData1 = {
-      id: 'contact-1',
-      displayName: '工作协作群',
-      avatar: 'https://p.qqan.com/up/2020-11/20201127157109035.jpg',
-      isGroup: true,
-      index: '[1]群组',
-      unread: 0,
-      lastSendTime: 1566047865417,
-      lastContent: '2'
-    }
-    const contactData2 = {
-      id: 'contact-2',
-      displayName: '自定义内容',
-      avatar: 'https://p.qqan.com/up/2021-1/20211301122243621.jpg',
-      // index: "Z",
-      click (next) {
-        next()
-      },
-      renderContainer: () => {
-        return <h1 style="text-indent:20px">自定义页面</h1>
-      },
-      lastSendTime: 1345209465000,
-      lastContent: '12312',
-      unread: 2
-    }
-    const contactData3 = {
-      id: 'contact-3',
-      displayName: '铁牛',
-      avatar: 'https://p.qqan.com/up/2021-1/20211301122243621.jpg',
-      index: 'T',
-      unread: 32,
-      lastSendTime: 3,
-      lastContent: '你好123'
-    }
-
+    this.imLogin()
     const { IMUI } = this.$refs
     setTimeout(() => {
       IMUI.changeContact('contact-1')
@@ -280,14 +243,6 @@ export default {
       return `[自定义通知内容]`
     })
 
-    let contactList = [
-      { ...contactData1 },
-      { ...contactData2 },
-      { ...contactData3 }
-      // ...Array(100).fill(contactData1)
-    ]
-
-    IMUI.initContacts(contactList)
     IMUI.initMenus([
       {
         name: 'messages'
@@ -322,14 +277,6 @@ export default {
                   知名连锁咖啡店的蛋糕吃出活虫 曝光内幕太震惊
                 </li>
               </ul>
-              <lemon-contact
-                props={{ contact: contactData1 }}
-                style="margin:20px"
-              />
-              <lemon-contact
-                props={{ contact: contactData3 }}
-                style="margin:20px"
-              />
             </div>
           )
         },
@@ -394,14 +341,35 @@ export default {
     IMUI.setLastContentRender('voice', message => {
       return <span>[语音]</span>
     })
-
-    const { SimpleIMUI } = this.$refs
-    contactData1.id = '11'
-    SimpleIMUI.initContacts([contactData1])
-    SimpleIMUI.initEmoji(EmojiData)
-    SimpleIMUI.changeContact(contactData1.id)
   },
   methods: {
+    imLogin () {
+      let id = 'sttest'
+      this.$EIM
+        .open({
+          user: id,
+          pwd: '1'
+        })
+        .then(() => {
+          this.$EIM.fetchUserInfoById(id).then((res) => {
+            this.user = {
+              id,
+              displayName: res.data[id].nickname,
+              avatar: res.data[id].avatarurl
+            }
+          })
+          this.getConversationList()
+        })
+    },
+    async getConversationList () {
+      const { IMUI } = this.$refs
+      let res = await this.$EIM.getConversationlist()
+      let contacts = await Promise.all(res.data.channel_infos.map(async item => {
+        let res = await formatConversation(item)
+        return res
+      }))
+      IMUI.initContacts(contacts)
+    },
     changeTheme () {
       this.theme = this.theme === 'default' ? 'blue' : 'default'
     },
@@ -560,6 +528,7 @@ export default {
       }, 1000)
     },
     handlePullMessages (contact, next, instance) {
+      console.log(contact, next, instance)
       const otheruser = {
         id: contact.id,
         displayName: contact.displayName,

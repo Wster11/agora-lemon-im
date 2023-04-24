@@ -5,10 +5,11 @@ import App from './App'
 // import router from './router'
 import LemonIMUI from 'lemon-imui'
 import 'lemon-imui/dist/index.css'
+import conn from './initim'
 
 Vue.config.productionTip = false
 Vue.use(LemonIMUI)
-
+Vue.prototype.$EIM = conn
 new Vue({
   render: (h) => h(App)
 }).$mount('#app')
