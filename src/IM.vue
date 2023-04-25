@@ -265,11 +265,11 @@ export default {
         isBottom: true
       },
       {
-        name: 'custom2',
-        title: '自定义按钮2',
-        unread: 0,
+        name: 'logout',
+        title: '退出登录',
         click: () => {
-          alert('拦截导航点击事件')
+          this.$EIM.close()
+          this.$emit('logout')
         },
         render: menu => {
           return <i class="lemon-icon-group" />

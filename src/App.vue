@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <div class="wrap" v-if="isShowApp">
-      <IM v-if="showIM"></IM>
-      <Login v-else  @login="onLogin"></Login>
+      <IM v-if="showIM" @logout="onLogout"></IM>
+      <Login v-else @login="onLogin"></Login>
     </div>
   </div>
 </template>
@@ -43,6 +43,11 @@ export default {
     },
     onLogin () {
       this.showIM = true
+    },
+    onLogout () {
+      this.showIM = false
+      localStorage.removeItem('token')
+      localStorage.removeItem('uid')
     }
   },
   mounted () {
