@@ -1,5 +1,4 @@
 import { CHAT_TYPE } from '../consts'
-
 /**
  * sdk接口获取的会话对象
  * @param {object} eimConversation
@@ -81,8 +80,38 @@ function formatLastContent (message) {
   return lastContent
 }
 
+const getTime = () => {
+  return new Date().getTime()
+}
+const generateRandId = () => {
+  return Math.random()
+    .toString(36)
+    .substr(-8)
+}
+const generateRandWord = () => {
+  return Math.random()
+    .toString(36)
+    .substr(2)
+}
+const generateMessage = (toContactId = '', fromUser, msgInfo) => {
+  const { id, time, msg } = msgInfo
+  return {
+    id: id,
+    status: 'succeed',
+    type: 'text',
+    sendTime: time,
+    content: msg,
+    toContactId,
+    fromUser
+  }
+}
+
 export {
   formatConversation,
   getConversationInfo,
-  getConversationIdByChannelId
+  getConversationIdByChannelId,
+  getTime,
+  generateRandId,
+  generateRandWord,
+  generateMessage
 }

@@ -35,17 +35,7 @@
         </template>
       </lemon-imui>
       <div class="action">
-        <lemon-button @click="appendMessage">发送消息</lemon-button>
-        <lemon-button @click="appendEventMessage">发送 event 消息</lemon-button>
-        <lemon-button @click="removeMessage">删除最近一条消息</lemon-button>
-        <lemon-button @click="updateMessage">修改消息</lemon-button>
-        <lemon-button @click="appendCustomMessage">发送消息</lemon-button>
-        <br />
-        <lemon-button @click="updateContact">修改联系人信息</lemon-button>
         <lemon-button @click="changeMenuVisible">切换导航显示</lemon-button>
-        <lemon-button @click="changeMenuAvatarVisible"
-          >切换头像显示</lemon-button
-        >
         <lemon-button @click="changeMessageNameVisible"
           >切换聊天窗口内名字显示</lemon-button
         >
@@ -62,33 +52,14 @@
 <script>
 import packageData from '../package.json'
 import EmojiData from './database/emoji'
-import { formatConversation } from './utils/index'
-
-const getTime = () => {
-  return new Date().getTime()
-}
-const generateRandId = () => {
-  return Math.random()
-    .toString(36)
-    .substr(-8)
-}
-const generateRandWord = () => {
-  return Math.random()
-    .toString(36)
-    .substr(2)
-}
-const generateMessage = (toContactId = '', fromUser, msgInfo) => {
-  const { id, time, msg } = msgInfo
-  return {
-    id: id,
-    status: 'succeed',
-    type: 'text',
-    sendTime: time,
-    content: msg,
-    toContactId,
-    fromUser
-  }
-}
+import {
+  formatConversation,
+  getTime,
+  generateRandId,
+  generateMessage
+} from './utils/index'
+import websdk from 'easemob-websdk'
+import { CHAT_TYPE } from './consts'
 export default {
   name: 'app',
   data () {
@@ -226,6 +197,27 @@ export default {
     }
   },
   mounted () {
+    this.$EIM.addEventHandler('message', {
+      onTextMessage: msg => {
+        let current = this.$refs.IMUI.contacts.find(contact => {
+          return contact.id === msg.from
+        })
+        let isGroup = msg.chatType === CHAT_TYPE.groupChat
+        let msgFrom = {
+          id: msg.from,
+          displayName: current.displayName || msg.from,
+          avatar: current.avatar || ''
+        }
+
+        let lemonMsg = generateMessage(
+          isGroup ? msg.to : msg.from,
+          msgFrom,
+          msg
+        )
+        this.$refs.IMUI.appendMessage(lemonMsg)
+      }
+    })
+
     this.imLogin()
     const { IMUI } = this.$refs
     IMUI.setLastContentRender('event', message => {
@@ -400,58 +392,7 @@ export default {
     changeMessageTimeVisible () {
       this.hideMessageTime = !this.hideMessageTime
     },
-    removeMessage () {
-      const { IMUI } = this.$refs
-      const messages = IMUI.getCurrentMessages()
-      const id = messages[messages.length - 1].id
-      if (messages.length > 0) {
-        IMUI.removeMessage(id)
-      }
-    },
-    updateMessage () {
-      const { IMUI } = this.$refs
-      const messages = IMUI.getCurrentMessages()
-      const message = messages[messages.length - 1]
-      if (messages.length > 0) {
-        const update = {
-          id: message.id,
-          status: 'succeed',
-          type: 'file',
-          fileName: '被修改成文件了.txt',
-          fileSize: '4200000'
-        }
-        if (message.type === 'event') {
-          update.fromUser = this.user
-        }
-        IMUI.updateMessage(update)
-        IMUI.messageViewToBottom()
-      }
-    },
-    appendCustomMessage () {
-      const { IMUI } = this.$refs
-      const message = {
-        id: generateRandId(),
-        status: 'succeed',
-        type: 'voice',
-        sendTime: getTime(),
-        content: '语音消息',
-        params1: '1',
-        params2: '2',
-        toContactId: 'contact-1',
-        fromUser: this.user
-      }
-      IMUI.appendMessage(message, true)
-    },
-    appendMessage () {
-      const { IMUI } = this.$refs
-      // const contact = IMUI.currentContact
-      const message = generateMessage('contact-3')
-      message.fromUser = {
-        ...message.fromUser,
-        ...this.user
-      }
-      IMUI.appendMessage(message, true)
-    },
+
     appendEventMessage () {
       const { IMUI } = this.$refs
       const message = {
@@ -472,15 +413,6 @@ export default {
         sendTime: getTime()
       }
       IMUI.appendMessage(message, true)
-    },
-    updateContact () {
-      this.$refs.IMUI.updateContact({
-        id: 'contact-3',
-        unread: 10,
-        displayName: generateRandWord(),
-        lastSendTime: getTime(),
-        lastContent: '修改昵称为随机字母'
-      })
     },
     changeDrawer (contact, instance) {
       instance.changeDrawer({
@@ -513,10 +445,32 @@ export default {
       instance.closeDrawer()
     },
     handleSend (message, next, file) {
+      const { IMUI } = this.$refs
       console.log(message, next, file)
-      setTimeout(() => {
-        next()
-      }, 1000)
+      let toContact = IMUI.getCurrentContact()
+      let msg
+      switch (message.type) {
+        case 'text':
+          msg = {
+            chatType: toContact.chatType,
+            type: 'txt',
+            to: message.toContactId,
+            msg: message.content,
+            ext: { extra: '附加消息' } // 发送附加消息
+          }
+          break
+
+        default:
+          break
+      }
+      this.$EIM
+        .send(websdk.message.create(msg))
+        .then(() => {
+          next()
+        })
+        .catch(() => {
+          next({ status: 'failed' })
+        })
     },
     handlePullMessages (contact, next, instance) {
       next()
@@ -673,6 +627,7 @@ a
   margin-bottom 60px
   .lemon-wrapper
     border:1px solid #ddd;
+    margin: 0 auto;
   .lemon-drawer
     border:1px solid #ddd;
     border-left:0;
