@@ -34,6 +34,50 @@ const formatConversation = async eimConversation => {
 }
 
 /**
+ * sdk接口获取的联系人id
+ * @param {string} id
+ */
+const formatContact = async id => {
+  let { avatar, displayName } = await getConversationInfo({
+    id,
+    chatType: CHAT_TYPE.singleChat
+  })
+  return {
+    id,
+    displayName,
+    avatar,
+    isGroup: false,
+    index: '单聊',
+    chatType: CHAT_TYPE.singleChat,
+    unread: 0,
+    lastSendTime: 0,
+    lastContent: ''
+  }
+}
+
+/**
+ * sdk接口获取的群组id
+ * @param {string} id
+ */
+const formatGroup = async id => {
+  let { avatar, displayName } = await getConversationInfo({
+    id,
+    chatType: CHAT_TYPE.groupChat
+  })
+  return {
+    id,
+    displayName,
+    avatar,
+    isGroup: false,
+    index: '我的群组',
+    chatType: CHAT_TYPE.groupChat,
+    unread: 0,
+    lastSendTime: 0,
+    lastContent: ''
+  }
+}
+
+/**
  * 获取会话信息
  */
 const getConversationInfo = async conversation => {
@@ -106,10 +150,18 @@ const generateMessage = (toContactId = '', fromUser, msgInfo) => {
   }
 }
 
+function uniqueFunc (arr, uniId) {
+  const res = new Map()
+  return arr.filter(item => !res.has(item[uniId]) && res.set(item[uniId], 1))
+}
+
 export {
   formatConversation,
+  formatContact,
+  formatGroup,
   getConversationInfo,
   getConversationIdByChannelId,
+  uniqueFunc,
   getTime,
   generateRandId,
   generateRandWord,

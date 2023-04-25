@@ -54,9 +54,12 @@ import packageData from '../package.json'
 import EmojiData from './database/emoji'
 import {
   formatConversation,
+  formatContact,
+  formatGroup,
   getTime,
   generateRandId,
-  generateMessage
+  generateMessage,
+  uniqueFunc
 } from './utils/index'
 import websdk from 'easemob-websdk'
 import { CHAT_TYPE } from './consts'
@@ -211,10 +214,12 @@ export default {
         }
 
         let lemonMsg = generateMessage(
-          isGroup ? msg.to : msg.from,
+          isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
           msgFrom,
           msg
         )
+        console.log(lemonMsg, msg)
+
         this.$refs.IMUI.appendMessage(lemonMsg)
       }
     })
@@ -339,13 +344,35 @@ export default {
     async getConversationList () {
       const { IMUI } = this.$refs
       let res = await this.$EIM.getConversationlist()
-      let contacts = await Promise.all(
+      let conversation = await Promise.all(
         res.data.channel_infos.map(async item => {
-          let res = await formatConversation(item)
-          return res
+          let dt = await formatConversation(item)
+          return dt
         })
       )
-      IMUI.initContacts(contacts)
+
+      let contactsRes = await this.$EIM.getContacts()
+      let contacts = await Promise.all(
+        contactsRes.data.map(async item => {
+          let dt = await formatContact(item)
+          return dt
+        })
+      )
+
+      let groupRes = await this.$EIM.getJoinedGroups({
+        pageNum: 0,
+        pageSize: 100
+      })
+      let groups = await Promise.all(
+        groupRes.data.map(async item => {
+          let dt = await formatGroup(item.groupid)
+          return dt
+        })
+      )
+
+      IMUI.initContacts(
+        uniqueFunc([...conversation, ...contacts, ...groups], 'id')
+      )
     },
     changeTheme () {
       this.theme = this.theme === 'default' ? 'blue' : 'default'
