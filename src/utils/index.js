@@ -127,8 +127,8 @@ const getConversationsInfo = async conversations => {
 function getConversationIdByChannelId (id) {
   if (typeof id !== 'string') return ''
   return (
-    id.match(/sdk111_(\S*)@|sdk111_(\S*)/)[1] ||
-    id.match(/sdk111_(\S*)@|sdk111_(\S*)/)[2]
+    id.match(/support_(\S*)@|support_(\S*)/)[1] ||
+    id.match(/support_(\S*)@|support_(\S*)/)[2]
   )
 }
 
@@ -169,7 +169,7 @@ const generateMessage = (toContactId = '', fromUser, msgInfo) => {
     status: 'succeed',
     type: 'text',
     sendTime: time,
-    content: msg,
+    content: msg || msgInfo.type,
     toContactId,
     fromUser
   }

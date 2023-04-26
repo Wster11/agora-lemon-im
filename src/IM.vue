@@ -219,8 +219,6 @@ export default {
           msgFrom,
           msg
         )
-        console.log(lemonMsg, msg)
-
         this.$refs.IMUI.appendMessage(lemonMsg)
       }
     })
@@ -346,10 +344,11 @@ export default {
       const { IMUI } = this.$refs
       let res = await this.$EIM.getConversationlist()
       let conversation = await Promise.all(
-        res.data.channel_infos.map(async item => {
-          let dt = await formatConversation(item)
-          return dt
-        })
+        res.data &&
+          res.data.channel_infos.map(async item => {
+            let dt = await formatConversation(item)
+            return dt
+          })
       )
 
       let contactsRes = await this.$EIM.getContacts()
@@ -394,16 +393,22 @@ export default {
       if (key === 'status') {
         instance.updateMessage({
           id: message.id,
-          status: 'going',
-          content: '正在重新发送消息...'
+          status: 'going'
         })
-        setTimeout(() => {
-          instance.updateMessage({
-            id: message.id,
-            status: 'succeed',
-            content: '发送成功'
+        this.$EIM
+          .send(message.failedMsg)
+          .then(() => {
+            instance.updateMessage({
+              id: message.id,
+              status: 'succeed'
+            })
           })
-        }, 2000)
+          .catch(() => {
+            instance.updateMessage({
+              id: message.id,
+              status: 'failed'
+            })
+          })
       }
     },
     changeMenuAvatarVisible () {
@@ -472,7 +477,6 @@ export default {
     },
     handleSend (message, next, file) {
       const { IMUI } = this.$refs
-      console.log(message, next, file)
       let toContact = IMUI.getCurrentContact()
       let msg
       switch (message.type) {
@@ -489,12 +493,14 @@ export default {
         default:
           break
       }
+      let sdkMsg = websdk.message.create(msg)
       this.$EIM
-        .send(websdk.message.create(msg))
+        .send(sdkMsg)
         .then(() => {
           next()
         })
         .catch(() => {
+          message.failedMsg = sdkMsg
           next({ status: 'failed' })
         })
     },
@@ -519,9 +525,11 @@ export default {
               let msgs = res.messages
                 .map(msg => {
                   let current =
-                    instance.contacts.find(contact => {
-                      return contact.id === msg.from
-                    }) || {}
+                    msg.from === this.user.id
+                      ? this.user
+                      : instance.contacts.find(contact => {
+                        return contact.id === msg.from
+                      }) || {}
                   let msgFrom = {
                     id: msg.from,
                     displayName: current.displayName || msg.from,
