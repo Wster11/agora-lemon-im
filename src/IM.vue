@@ -59,6 +59,7 @@ import {
   getTime,
   generateRandId,
   generateMessage,
+  getConversationsInfo,
   uniqueFunc
 } from './utils/index'
 import websdk from 'easemob-websdk'
@@ -370,10 +371,14 @@ export default {
         })
       )
 
-      IMUI.initContacts(
-        uniqueFunc([...conversation, ...contacts, ...groups], 'id')
+      let uniqueConversations = uniqueFunc(
+        [...conversation, ...contacts, ...groups],
+        'id'
       )
+      IMUI.initContacts(uniqueConversations)
+      IMUI.initContacts(await getConversationsInfo(uniqueConversations))
     },
+
     changeTheme () {
       this.theme = this.theme === 'default' ? 'blue' : 'default'
     },

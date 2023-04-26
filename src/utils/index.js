@@ -15,18 +15,13 @@ const formatConversation = async eimConversation => {
       : CHAT_TYPE.singleChat
   const isGroup = eimConversation.chatType === CHAT_TYPE.groupChat
   const id = getConversationIdByChannelId(channelId)
-  let { avatar, displayName } = await getConversationInfo({
-    id,
-    chatType: eimConversation.chatType
-  })
 
   return {
     id,
-    displayName,
-    avatar,
     isGroup,
     index: isGroup ? '我的群组' : '单聊',
     chatType: eimConversation.chatType,
+    displayName: id,
     unread: unReadCount,
     lastSendTime: lastMessage.time,
     lastContent: formatLastContent(lastMessage)
@@ -38,14 +33,8 @@ const formatConversation = async eimConversation => {
  * @param {string} id
  */
 const formatContact = async id => {
-  let { avatar, displayName } = await getConversationInfo({
-    id,
-    chatType: CHAT_TYPE.singleChat
-  })
   return {
     id,
-    displayName,
-    avatar,
     isGroup: false,
     index: '单聊',
     chatType: CHAT_TYPE.singleChat,
@@ -60,14 +49,8 @@ const formatContact = async id => {
  * @param {string} id
  */
 const formatGroup = async id => {
-  let { avatar, displayName } = await getConversationInfo({
-    id,
-    chatType: CHAT_TYPE.groupChat
-  })
   return {
     id,
-    displayName,
-    avatar,
     isGroup: false,
     index: '我的群组',
     chatType: CHAT_TYPE.groupChat,
@@ -78,22 +61,64 @@ const formatGroup = async id => {
 }
 
 /**
- * 获取会话信息
+ * 批量获取用户属性
  */
-const getConversationInfo = async conversation => {
+
+const getUsersInfo = async conversations => {
   let conn = window.EIM
-  if (conversation.chatType === CHAT_TYPE.singleChat) {
-    let res = await conn.fetchUserInfoById(conversation.id)
-    return {
-      displayName: res.data[conversation.id].nickname || conversation.id,
-      avatar: res.data[conversation.id].avatarurl
-    }
-  } else if (conversation.chatType === CHAT_TYPE.groupChat) {
-    let res = await conn.getGroupInfo({ groupId: conversation.id })
-    return {
-      displayName: res.data[0].name
-    }
-  }
+  let res =
+    (await conn.fetchUserInfoById(
+      conversations.map(item => {
+        return item.id
+      })
+    )) || {}
+  return res.data
+}
+
+/**
+ * 批量获取群组信息
+ */
+
+const getGroupsInfo = async conversations => {
+  let conn = window.EIM
+  let res =
+    (await conn.getGroupInfo({
+      groupId: conversations.map(item => {
+        return item.id
+      })
+    })) || {}
+  return res.data
+}
+
+/**
+ * 获取会话列表
+ */
+const getConversationsInfo = async conversations => {
+  let userList = conversations.filter(item => {
+    return !item.isGroup
+  })
+
+  let groupList = conversations.filter(item => {
+    return item.isGroup
+  })
+  let userInfos = await getUsersInfo(userList)
+  let grousInfo = await getGroupsInfo(groupList)
+
+  userList.forEach(item => {
+    let info = userInfos[item.id] || {}
+    item.displayName = info.nickname || item.id
+    item.avatar = info.avatarurl || ''
+  })
+
+  groupList.forEach(groupItem => {
+    let info = grousInfo.find(item => {
+      return groupItem.id === item.id
+    })
+    groupItem.displayName = info.name || groupItem.id
+    groupItem.avatar = info.avatarurl || ''
+  })
+
+  return [...userList, ...groupList]
 }
 
 /**
@@ -157,10 +182,12 @@ function uniqueFunc (arr, uniId) {
 
 export {
   formatConversation,
+  getUsersInfo,
   formatContact,
   formatGroup,
-  getConversationInfo,
+  getGroupsInfo,
   getConversationIdByChannelId,
+  getConversationsInfo,
   uniqueFunc,
   getTime,
   generateRandId,
