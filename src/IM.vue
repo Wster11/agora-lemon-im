@@ -60,7 +60,8 @@ import {
   generateRandId,
   generateMessage,
   getConversationsInfo,
-  uniqueFunc
+  uniqueFunc,
+  formatImFile
 } from './utils/index'
 import websdk from 'easemob-websdk'
 import { CHAT_TYPE } from './consts'
@@ -203,6 +204,25 @@ export default {
   mounted () {
     this.$EIM.addEventHandler('message', {
       onTextMessage: msg => {
+        let current =
+          this.$refs.IMUI.contacts.find(contact => {
+            return contact.id === msg.from
+          }) || {}
+        let isGroup = msg.chatType === CHAT_TYPE.groupChat
+        let msgFrom = {
+          id: msg.from,
+          displayName: current.displayName || msg.from,
+          avatar: current.avatar || ''
+        }
+
+        let lemonMsg = generateMessage(
+          isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
+          msgFrom,
+          msg
+        )
+        this.$refs.IMUI.appendMessage(lemonMsg)
+      },
+      onImageMessage: msg => {
         let current =
           this.$refs.IMUI.contacts.find(contact => {
             return contact.id === msg.from
@@ -476,6 +496,7 @@ export default {
       instance.closeDrawer()
     },
     handleSend (message, next, file) {
+      console.log(message, 'messagemessage')
       const { IMUI } = this.$refs
       let toContact = IMUI.getCurrentContact()
       let msg
@@ -485,11 +506,29 @@ export default {
             chatType: toContact.chatType,
             type: 'txt',
             to: message.toContactId,
-            msg: message.content,
-            ext: { extra: '附加消息' } // 发送附加消息
+            msg: message.content
           }
           break
-
+        case 'image':
+          msg = {
+            chatType: toContact.chatType,
+            type: 'img',
+            to: message.toContactId,
+            file: formatImFile(file),
+            onFileUploadError: function () {
+              // 消息上传失败
+              console.log('onFileUploadError')
+            },
+            onFileUploadProgress: function (progress) {
+              // 上传进度的回调
+              console.log(progress)
+            },
+            onFileUploadComplete: function () {
+              // 消息上传成功
+              console.log('onFileUploadComplete')
+            }
+          }
+          break
         default:
           break
       }

@@ -164,7 +164,8 @@ const generateRandWord = () => {
 }
 const generateMessage = (toContactId = '', fromUser, msgInfo) => {
   const { id, time, msg } = msgInfo
-  return {
+  let lemonMsg
+  lemonMsg = {
     id: id,
     status: 'succeed',
     type: 'text',
@@ -173,11 +174,45 @@ const generateMessage = (toContactId = '', fromUser, msgInfo) => {
     toContactId,
     fromUser
   }
+  switch (msgInfo.type) {
+    case 'txt':
+      lemonMsg = {
+        ...lemonMsg,
+        type: 'text',
+        content: msg
+      }
+      break
+    case 'img':
+      lemonMsg = {
+        ...lemonMsg,
+        type: 'image',
+        content: msgInfo.thumb || msgInfo.url
+      }
+      break
+
+    default:
+      lemonMsg = {
+        ...lemonMsg,
+        type: 'text',
+        content: `[${msgInfo.type}]`
+      }
+      break
+  }
+  return lemonMsg
 }
 
 function uniqueFunc (arr, uniId) {
   const res = new Map()
   return arr.filter(item => !res.has(item[uniId]) && res.set(item[uniId], 1))
+}
+
+// 格式化file文件
+const formatImFile = file => {
+  return {
+    filename: file.name,
+    filetype: file.type.split('/')[1],
+    data: file
+  }
 }
 
 export {
@@ -192,5 +227,6 @@ export {
   getTime,
   generateRandId,
   generateRandWord,
-  generateMessage
+  generateMessage,
+  formatImFile
 }
