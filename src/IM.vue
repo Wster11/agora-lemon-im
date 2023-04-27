@@ -52,6 +52,7 @@
 <script>
 import packageData from '../package.json'
 import EmojiData from './database/emoji'
+import { message } from 'ant-design-vue'
 import {
   formatConversation,
   formatContact,
@@ -65,6 +66,7 @@ import {
 } from './utils/index'
 import websdk from 'easemob-websdk'
 import { CHAT_TYPE } from './consts'
+const $message = message
 export default {
   name: 'app',
   data () {
@@ -146,8 +148,22 @@ export default {
               toContactId: message.toContactId,
               sendTime: getTime()
             }
-            IMUI.removeMessage(message.id)
-            IMUI.appendMessage(data, true)
+            let currentContact = IMUI.getCurrentContact()
+            this.$EIM
+              .recallMessage({
+                mid: message.id,
+                to: message.toContactId,
+                chatType: currentContact.chatType
+              })
+              .then(() => {
+                IMUI.removeMessage(message.id)
+                IMUI.appendMessage(data, true)
+              })
+              .catch(e => {
+                if (e.message === 'exceed recall time limit') {
+                  $message.error('已超过撤回时间')
+                }
+              })
             hide()
           },
           visible: instance => {
@@ -240,6 +256,23 @@ export default {
           msg
         )
         this.$refs.IMUI.appendMessage(lemonMsg)
+      },
+      onRecallMessage: msg => {
+        console.log(msg, 'msgmsgmsg')
+        const data = {
+          id: generateRandId(),
+          type: 'event',
+          // 使用 jsx 时 click必须使用箭头函数（使上下文停留在vue内）
+          content: (
+            <div>
+              <span>{msg.from}撤回了一条消息</span>
+            </div>
+          ),
+          toContactId: msg.to,
+          sendTime: getTime()
+        }
+        IMUI.removeMessage(msg.mid)
+        IMUI.appendMessage(data, true)
       }
     })
 
