@@ -1,4 +1,5 @@
 import { CHAT_TYPE } from '../consts'
+import { pinyin } from 'pinyin-pro'
 /**
  * sdk接口获取的会话对象
  * @param {object} eimConversation
@@ -107,6 +108,9 @@ const getConversationsInfo = async conversations => {
   userList.forEach(item => {
     let info = userInfos[item.id] || {}
     item.displayName = info.nickname || item.id
+    item.index = pinyin(item.displayName, {
+      pattern: 'first'
+    })[0].toUpperCase()
     item.avatar = info.avatarurl || ''
   })
 
