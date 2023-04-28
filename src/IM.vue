@@ -34,6 +34,7 @@
           <br />
         </template>
       </lemon-imui>
+      <Setting ref="setting" :user="user"/>
       <div class="action">
         <lemon-button @click="changeMenuVisible">切换导航显示</lemon-button>
         <lemon-button @click="changeMessageNameVisible"
@@ -52,7 +53,8 @@
 <script>
 import packageData from '../package.json'
 import EmojiData from './database/emoji'
-import { message } from 'ant-design-vue'
+import { message, Icon } from 'ant-design-vue'
+import Setting from './components/setting'
 import {
   formatConversation,
   formatContact,
@@ -69,6 +71,10 @@ import { CHAT_TYPE } from './consts'
 const $message = message
 export default {
   name: 'app',
+  components: {
+    Icon,
+    Setting
+  },
   data () {
     return {
       historyMessageCursor: {},
@@ -336,11 +342,12 @@ export default {
         name: 'logout',
         title: '退出登录',
         click: () => {
-          this.$EIM.close()
-          this.$emit('logout')
+          this.$refs.setting.showModal()
+          // this.$EIM.close()
+          // this.$emit('logout')
         },
         render: menu => {
-          return <i class="lemon-icon-group" />
+          return <icon type="setting" />
         },
         isBottom: true
       }
