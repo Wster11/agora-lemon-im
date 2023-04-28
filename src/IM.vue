@@ -181,6 +181,10 @@ export default {
           text: '转发'
         },
         {
+          click: (e, instance, hide) => {
+            const { message } = instance
+            this.$copyText(message.content)
+          },
           visible: instance => {
             return instance.message.type === 'text'
           },
@@ -201,10 +205,17 @@ export default {
         {
           click: (e, instance, hide) => {
             const { IMUI, message } = instance
+            let currentContact = IMUI.getCurrentContact()
+            if (message.status === 'succeed') {
+              this.$EIM.removeHistoryMessages({
+                targetId: message.toContactId,
+                chatType: currentContact.chatType,
+                messageIds: [message.id]
+              })
+            }
             IMUI.removeMessage(message.id)
             hide()
           },
-          icon: 'lemon-icon-folder',
           color: 'red',
           text: '删除'
         }
@@ -529,7 +540,6 @@ export default {
       instance.closeDrawer()
     },
     handleSend (message, next, file) {
-      console.log(message, 'messagemessage')
       const { IMUI } = this.$refs
       let toContact = IMUI.getCurrentContact()
       let msg
@@ -568,7 +578,8 @@ export default {
       let sdkMsg = websdk.message.create(msg)
       this.$EIM
         .send(sdkMsg)
-        .then(() => {
+        .then(res => {
+          message.id = res.serverMsgId
           next()
         })
         .catch(() => {
@@ -636,6 +647,15 @@ export default {
 </script>
 
 <style lang="stylus">
+.lemon-editor__emoji-item {
+  width 28px;
+  padding 2px
+}
+.lemon-message-text .lemon-message__content img {
+  padding 2px;
+  width 20px;
+  height 20px;
+}
 ::selection{background:#000;color:#fff;}
 body
   font-family "Microsoft YaHei"

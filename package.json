@@ -18,7 +18,8 @@
     "easemob-websdk": "^4.1.6",
     "lemon-imui": "^1.7.6",
     "stylus-loader": "^3.0.2",
-    "vue": "^2.5.2"
+    "vue": "^2.5.2",
+    "vue-clipboard2": "^0.3.3"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

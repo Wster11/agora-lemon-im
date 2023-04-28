@@ -5,9 +5,11 @@ import App from './App'
 import LemonIMUI from 'lemon-imui'
 import 'lemon-imui/dist/index.css'
 import conn from './initim'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.config.productionTip = false
 Vue.use(LemonIMUI)
+Vue.use(VueClipboard)
 Vue.prototype.$EIM = conn
 
 /* eslint-disable no-new */

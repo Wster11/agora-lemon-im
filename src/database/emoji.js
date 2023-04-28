@@ -1,291 +1,289 @@
+import emoji1 from '../assets/emoji/ee_1@2x.png'
+import emoji2 from '../assets/emoji/ee_2@2x.png'
+import emoji3 from '../assets/emoji/ee_3@2x.png'
+import emoji4 from '../assets/emoji/ee_4@2x.png'
+import emoji5 from '../assets/emoji/ee_5@2x.png'
+import emoji6 from '../assets/emoji/ee_6@2x.png'
+import emoji7 from '../assets/emoji/ee_7@2x.png'
+import emoji8 from '../assets/emoji/ee_8@2x.png'
+import emoji9 from '../assets/emoji/ee_9@2x.png'
+import emoji10 from '../assets/emoji/ee_10@2x.png'
+import emoji11 from '../assets/emoji/ee_11@2x.png'
+import emoji12 from '../assets/emoji/ee_12@2x.png'
+import emoji13 from '../assets/emoji/ee_13@2x.png'
+import emoji14 from '../assets/emoji/ee_14@2x.png'
+import emoji15 from '../assets/emoji/ee_15@2x.png'
+import emoji16 from '../assets/emoji/ee_16@2x.png'
+import emoji17 from '../assets/emoji/ee_17@2x.png'
+import emoji18 from '../assets/emoji/ee_18@2x.png'
+import emoji19 from '../assets/emoji/ee_19@2x.png'
+import emoji20 from '../assets/emoji/ee_20@2x.png'
+import emoji21 from '../assets/emoji/ee_21@2x.png'
+import emoji22 from '../assets/emoji/ee_22@2x.png'
+import emoji23 from '../assets/emoji/ee_23@2x.png'
+import emoji24 from '../assets/emoji/ee_24@2x.png'
+import emoji25 from '../assets/emoji/ee_25@2x.png'
+import emoji26 from '../assets/emoji/ee_26@2x.png'
+import emoji27 from '../assets/emoji/ee_27@2x.png'
+import emoji28 from '../assets/emoji/ee_28@2x.png'
+import emoji29 from '../assets/emoji/ee_29@2x.png'
+import emoji30 from '../assets/emoji/ee_30@2x.png'
+import emoji31 from '../assets/emoji/ee_31@2x.png'
+import emoji32 from '../assets/emoji/ee_32@2x.png'
+import emoji33 from '../assets/emoji/ee_33@2x.png'
+import emoji34 from '../assets/emoji/ee_34@2x.png'
+import emoji35 from '../assets/emoji/ee_35@2x.png'
+import emoji36 from '../assets/emoji/ee_36@2x.png'
+import emoji37 from '../assets/emoji/ee_37@2x.png'
+import emoji38 from '../assets/emoji/ee_38@2x.png'
+import emoji39 from '../assets/emoji/ee_39@2x.png'
+import emoji40 from '../assets/emoji/ee_40@2x.png'
+import emoji41 from '../assets/emoji/ee_41@2x.png'
+import emoji42 from '../assets/emoji/ee_42@2x.png'
+import emoji43 from '../assets/emoji/ee_43@2x.png'
+import emoji44 from '../assets/emoji/ee_44@2x.png'
+import emoji45 from '../assets/emoji/ee_45@2x.png'
+import emoji46 from '../assets/emoji/ee_46@2x.png'
+import emoji47 from '../assets/emoji/ee_47@2x.png'
+
 export default [
   {
     label: '表情',
     children: [
       {
         name: '1f600',
-        title: '微笑',
-        src: 'https://n.sinaimg.cn/sinakd20211201s/650/w400h250/20211201/0986-e1bab301a1e9d097cf569e755186ac7f.jpg'
-      },
-      {
-        name: '1f62c',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f62c.png'
+        title: 'emoji',
+        src: emoji1
       },
       {
         name: '1f601',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f601.png'
-      },
-      {
-        name: '1f602',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f602.png'
-      },
-      {
-        name: '1f923',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f923.png'
-      },
-      {
-        name: '1f973',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f973.png'
+        title: 'emoji',
+        src: emoji2
       },
       {
         name: '1f603',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f603.png'
+        title: 'emoji',
+        src: emoji3
       },
       {
         name: '1f604',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f604.png'
+        title: 'emoji',
+        src: emoji4
       },
       {
         name: '1f605',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f605.png'
+        title: 'emoji',
+        src: emoji5
       },
       {
         name: '1f606',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f606.png'
+        title: 'emoji',
+        src: emoji6
       },
       {
         name: '1f607',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f607.png'
+        title: 'emoji',
+        src: emoji7
+      },
+      {
+        name: '1f608',
+        title: 'emoji',
+        src: emoji8
       },
       {
         name: '1f609',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f609.png'
-      },
-      {
-        name: '1f60a',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f60a.png'
-      },
-      {
-        name: '1f642',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f642.png'
-      },
-      {
-        name: '1f643',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f643.png'
-      },
-      {
-        name: '1263a',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/263a.png'
-      },
-      {
-        name: '1f60b',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f60b.png'
-      },
-      {
-        name: '1f60c',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f60c.png'
-      },
-      {
-        name: '1f60d',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f60d.png'
-      },
-      {
-        name: '1f970',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f970.png'
-      },
-      {
-        name: '1f618',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f618.png'
-      },
-      {
-        name: '1f617',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f617.png'
-      },
-      {
-        name: '1f619',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f619.png'
-      },
-      {
-        name: '1f61a',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f61a.png'
-      },
-      {
-        name: '1f61c',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f61c.png'
-      },
-      {
-        name: '1f92a',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f92a.png'
-      },
-      {
-        name: '1f928',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f928.png'
-      },
-      {
-        name: '1f9d0',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f9d0.png'
-      },
-      {
-        name: '1f61d',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f61d.png'
-      },
-      {
-        name: '1f61b',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f61b.png'
-      },
-      {
-        name: '1f911',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f911.png'
-      },
-      {
-        name: '1f913',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f913.png'
-      },
-      {
-        name: '1f60e',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f60e.png'
-      },
-      {
-        name: '1f929',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f929.png'
-      },
-      {
-        name: '1f921',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f921.png'
-      },
-      {
-        name: '1f920',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f920.png'
-      },
-      {
-        name: '1f917',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f917.png'
-      },
-      {
-        name: '1f60f',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f60f.png'
-      },
-      {
-        name: '1f636',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f636.png'
+        title: 'emoji',
+        src: emoji9
       },
       {
         name: '1f610',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f610.png'
+        title: 'emoji',
+        src: emoji10
       },
       {
         name: '1f611',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f611.png'
+        title: 'emoji',
+        src: emoji11
       },
       {
         name: '1f612',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f612.png'
+        title: 'emoji',
+        src: emoji12
       },
       {
-        name: '1f644',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f644.png'
+        name: '1f613',
+        title: 'emoji',
+        src: emoji13
       },
       {
-        name: '1f914',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f914.png'
+        name: '1f614',
+        title: 'emoji',
+        src: emoji14
       },
       {
-        name: '1f925',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f925.png'
+        name: '1f615',
+        title: 'emoji',
+        src: emoji15
       },
       {
-        name: '1f92d',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f92d.png'
+        name: '1f616',
+        title: 'emoji',
+        src: emoji16
       },
       {
-        name: '1f92b',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f92b.png'
+        name: '1f617',
+        title: 'emoji',
+        src: emoji17
       },
       {
-        name: '1f92c',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f92c.png'
+        name: '1f618',
+        title: 'emoji',
+        src: emoji18
       },
       {
-        name: '1f92f',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f92f.png'
-      },
-      {
-        name: '1f633',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f633.png'
-      },
-      {
-        name: '1f61e',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f61e.png'
-      },
-      {
-        name: '1f61f',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f61f.png'
+        name: '1f619',
+        title: 'emoji',
+        src: emoji19
       },
       {
         name: '1f620',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f620.png'
+        title: 'emoji',
+        src: emoji20
       },
       {
         name: '1f621',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f621.png'
-      }
-    ]
-  },
-  {
-    label: '收藏',
-    children: [
-      {
-        name: '1f62c',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f62c.png'
+        title: 'emoji',
+        src: emoji21
       },
       {
-        name: '1f621',
-        title: '微笑',
-        src: 'https://twemoji.maxcdn.com/2/72x72/1f621.png'
+        name: '1f622',
+        title: 'emoji',
+        src: emoji22
+      },
+      {
+        name: '1f623',
+        title: 'emoji',
+        src: emoji23
+      },
+      {
+        name: '1f624',
+        title: 'emoji',
+        src: emoji24
+      },
+      {
+        name: '1f625',
+        title: 'emoji',
+        src: emoji25
+      },
+      {
+        name: '1f626',
+        title: 'emoji',
+        src: emoji26
+      },
+      {
+        name: '1f627',
+        title: 'emoji',
+        src: emoji27
+      },
+      {
+        name: '1f628',
+        title: 'emoji',
+        src: emoji28
+      },
+      {
+        name: '1f629',
+        title: 'emoji',
+        src: emoji29
+      },
+      {
+        name: '1f630',
+        title: 'emoji',
+        src: emoji30
+      },
+      {
+        name: '1f631',
+        title: 'emoji',
+        src: emoji31
+      },
+      {
+        name: '1f632',
+        title: 'emoji',
+        src: emoji32
+      },
+      {
+        name: '1f633',
+        title: 'emoji',
+        src: emoji33
+      },
+      {
+        name: '1f634',
+        title: 'emoji',
+        src: emoji34
+      },
+      {
+        name: '1f635',
+        title: 'emoji',
+        src: emoji35
+      },
+      {
+        name: '1f636',
+        title: 'emoji',
+        src: emoji36
+      },
+      {
+        name: '1f637',
+        title: 'emoji',
+        src: emoji37
+      },
+      {
+        name: '1f638',
+        title: 'emoji',
+        src: emoji38
+      },
+      {
+        name: '1f639',
+        title: 'emoji',
+        src: emoji39
+      },
+      {
+        name: '1f640',
+        title: 'emoji',
+        src: emoji40
+      },
+      {
+        name: '1f641',
+        title: 'emoji',
+        src: emoji41
+      },
+      {
+        name: '1f642',
+        title: 'emoji',
+        src: emoji42
+      },
+      {
+        name: '1f643',
+        title: 'emoji',
+        src: emoji43
+      },
+      {
+        name: '1f644',
+        title: 'emoji',
+        src: emoji44
+      },
+      {
+        name: '1f645',
+        title: 'emoji',
+        src: emoji45
+      },
+      {
+        name: '1f646',
+        title: 'emoji',
+        src: emoji46
+      },
+      {
+        name: '1f647',
+        title: 'emoji',
+        src: emoji47
       }
     ]
   }
