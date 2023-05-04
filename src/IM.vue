@@ -200,11 +200,19 @@ export default {
           visible: instance => {
             return instance.message.type === 'image'
           },
+          click: (e, instance, hide) => {
+            window.open(instance.message.content)
+            hide()
+          },
           text: '下载图片'
         },
         {
           visible: instance => {
             return instance.message.type === 'file'
+          },
+          click: (e, instance, hide) => {
+            window.open(instance.message.content)
+            hide()
           },
           text: '下载文件'
         },
@@ -256,6 +264,25 @@ export default {
         this.$refs.IMUI.appendMessage(lemonMsg)
       },
       onImageMessage: msg => {
+        let current =
+          this.$refs.IMUI.contacts.find(contact => {
+            return contact.id === msg.from
+          }) || {}
+        let isGroup = msg.chatType === CHAT_TYPE.groupChat
+        let msgFrom = {
+          id: msg.from,
+          displayName: current.displayName || msg.from,
+          avatar: current.avatar || ''
+        }
+
+        let lemonMsg = generateMessage(
+          isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
+          msgFrom,
+          msg
+        )
+        this.$refs.IMUI.appendMessage(lemonMsg)
+      },
+      onFileMessage: msg => {
         let current =
           this.$refs.IMUI.contacts.find(contact => {
             return contact.id === msg.from
@@ -362,35 +389,6 @@ export default {
       },
       {
         name: 'uploadImage'
-      },
-      {
-        name: 'test1',
-        click: () => {
-          IMUI.$refs.editor.selectFile('application/vnd.ms-excel')
-        },
-        render: () => {
-          return <span>Excel</span>
-        }
-      },
-      {
-        name: 'test1',
-        click: () => {
-          IMUI.initEditorTools([{ name: 'uploadFile' }, { name: 'emoji' }])
-        },
-        render: () => {
-          return <span>重制工具栏</span>
-        }
-      },
-      {
-        name: 'test2',
-        isRight: true,
-        title: '上传 Excel',
-        click: () => {
-          alert('点击了 ··· ')
-        },
-        render: () => {
-          return <b>···</b>
-        }
       }
     ])
     IMUI.initEmoji(EmojiData)
@@ -563,6 +561,27 @@ export default {
           msg = {
             chatType: toContact.chatType,
             type: 'img',
+            to: message.toContactId,
+            file: formatImFile(file),
+            onFileUploadError: function () {
+              // 消息上传失败
+              console.log('onFileUploadError')
+            },
+            onFileUploadProgress: function (progress) {
+              // 上传进度的回调
+              console.log(progress)
+            },
+            onFileUploadComplete: function () {
+              // 消息上传成功
+              console.log('onFileUploadComplete')
+            }
+          }
+          break
+        case 'file':
+          console.log(file, 'file', message)
+          msg = {
+            chatType: toContact.chatType,
+            type: 'file',
             to: message.toContactId,
             file: formatImFile(file),
             onFileUploadError: function () {

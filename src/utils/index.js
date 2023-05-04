@@ -194,6 +194,16 @@ const generateMessage = (toContactId = '', fromUser, msgInfo) => {
       }
       break
 
+    case 'file':
+      lemonMsg = {
+        ...lemonMsg,
+        type: 'file',
+        fileName: msgInfo.filename,
+        fileSize: msgInfo.file_length,
+        content: msgInfo.thumb || msgInfo.url
+      }
+      break
+
     default:
       lemonMsg = {
         ...lemonMsg,
