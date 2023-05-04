@@ -1,17 +1,17 @@
 <template>
   <div class="login-wrap">
-    <a-form :form="form" @submit="handleSubmit">
-      <a-form-item label="用户名">
-        <a-input
+    <Form :form="form" @submit="handleSubmit">
+      <FormItem label="用户名">
+        <Input
           placeholder="请输入用户名"
           v-decorator="[
             'user',
             { rules: [{ required: true, message: '请输入用户名!' }] }
           ]"
         />
-      </a-form-item>
-      <a-form-item label="密码">
-        <a-input
+      </FormItem>
+      <FormItem label="密码">
+        <Input
           type="password"
           placeholder="请输入登录密码"
           v-decorator="[
@@ -21,17 +21,17 @@
             }
           ]"
         />
-      </a-form-item>
-      <a-form-item>
-        <a-button block type="primary" html-type="submit">
+      </FormItem>
+      <FormItem>
+        <Button block type="primary" html-type="submit">
           登录
-        </a-button>
-      </a-form-item>
-    </a-form>
+        </Button>
+      </FormItem>
+    </Form>
   </div>
 </template>
 <script>
-import { Button, Form, Input, message } from 'ant-design-vue'
+import { Button, Form, Input } from 'ant-design-vue'
 
 const ERROR_CODE = {
   noAuth: 'token not assign error',
@@ -48,15 +48,14 @@ export { ERROR_CODE }
 
 export default {
   components: {
-    aButton: Button,
-    aForm: Form,
-    aInput: Input,
-    aFormItem: Form.Item
+    Button: Button,
+    Form: Form,
+    Input: Input,
+    FormItem: Form.Item
   },
   data () {
     return {
-      formLayout: 'horizontal',
-      form: this.$form.createForm(this, { name: 'coordinated' })
+      form: this.$form.createForm(this, {name: 'login'})
     }
   },
   methods: {
@@ -71,7 +70,7 @@ export default {
               pwd: values.password
             })
             .then(res => {
-              message.success('登录成功')
+              this.$message.success('登录成功')
               window.localStorage.setItem('uid', values.user)
               window.localStorage.setItem('token', res.accessToken)
               this.$emit('login')
@@ -82,13 +81,13 @@ export default {
                 errInfo = JSON.parse(e.data.data)
               }
               if (errInfo.error_description === ERROR_CODE.invalidPassword) {
-                message.error('用户名或密码错误')
+                this.$message.error('用户名或密码错误')
               } else if (
                 errInfo.error_description === ERROR_CODE.userNotFound
               ) {
-                message.error('用户不存在')
+                this.$message.error('用户不存在')
               } else {
-                message.error('登录失败')
+                this.$message.error('登录失败')
               }
             })
         }

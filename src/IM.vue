@@ -34,7 +34,16 @@
           <br />
         </template>
       </lemon-imui>
-      <Setting ref="setting" :user="user"/>
+      <Setting
+        ref="setting"
+        :user="user"
+        @updateProfile="updateProfile"
+        @logout="
+          () => {
+            this.$emit('logout');
+          }
+        "
+      />
       <div class="action">
         <lemon-button @click="changeMenuVisible">切换导航显示</lemon-button>
         <lemon-button @click="changeMessageNameVisible"
@@ -53,7 +62,7 @@
 <script>
 import packageData from '../package.json'
 import EmojiData from './database/emoji'
-import { message, Icon } from 'ant-design-vue'
+import { Icon } from 'ant-design-vue'
 import Setting from './components/setting'
 import {
   formatConversation,
@@ -68,7 +77,6 @@ import {
 } from './utils/index'
 import websdk from 'easemob-websdk'
 import { CHAT_TYPE } from './consts'
-const $message = message
 export default {
   name: 'app',
   components: {
@@ -167,7 +175,7 @@ export default {
               })
               .catch(e => {
                 if (e.message === 'exceed recall time limit') {
-                  $message.error('已超过撤回时间')
+                  this.$message.error('已超过撤回时间')
                 }
               })
             hide()
@@ -370,8 +378,6 @@ export default {
         title: '退出登录',
         click: () => {
           this.$refs.setting.showModal()
-          // this.$EIM.close()
-          // this.$emit('logout')
         },
         render: menu => {
           return <icon type="setting" />
@@ -667,7 +673,20 @@ export default {
     handleChangeMenu () {
       console.log('Event:change-menu')
     },
-    openCustomContainer () {}
+    openCustomContainer () {},
+    updateProfile (dt) {
+      const { nickname, avatarurl } = dt
+      this.$refs.IMUI.updateContact({
+        id: this.user.id,
+        displayName: nickname,
+        avatar: avatarurl
+      })
+      this.user = {
+        id: this.user.id,
+        displayName: nickname,
+        avatar: avatarurl
+      }
+    }
   }
 }
 </script>
