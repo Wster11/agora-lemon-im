@@ -29,10 +29,7 @@
           :label-col="{ span: 3 }"
           :wrapper-col="{ span: 20 }"
         >
-          <Input
-            placeholder="请输入用户头像URL"
-            v-decorator="['avatarurl']"
-          />
+          <Input placeholder="请输入用户头像URL" v-decorator="['avatarurl']" />
         </FormItem>
       </Form>
     </Modal>
@@ -59,15 +56,12 @@ export default {
   },
   data () {
     return {
-      ModalText: 'Content of the modal',
       visible: false,
       confirmLoading: false,
-      form: this.$form.createForm(this, {name: 'profile'})
+      form: this.$form.createForm(this, { name: 'profile' })
     }
   },
-  mounted () {
-
-  },
+  mounted () {},
   methods: {
     showModal () {
       this.visible = true

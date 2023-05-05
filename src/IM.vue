@@ -21,7 +21,21 @@
         <template #cover>
           <div class="cover">
             <i class="lemon-icon-message"></i>
-            <p><b>自定义封面 Lemon</b> IMUI</p>
+            <p><b> Easemob</b> Chat</p>
+          </div>
+        </template>
+        <template #sidebar-contact-fixedtop>
+          <div class="sidebar-input-wrap">
+            <Search placeholder="搜索" size="small" />
+            <Icon
+              type="user-add"
+              @click="showAddFriend"
+              :style="{
+                fontSize: '16px',
+                marginLeft: '10px',
+                cursor: 'pointer'
+              }"
+            />
           </div>
         </template>
         <template #message-title="contact">
@@ -44,6 +58,7 @@
           }
         "
       />
+      <AddFriend :IMUI="this.$refs.IMUI" ref="addFriend" />
       <div class="action">
         <lemon-button @click="changeMenuVisible">切换导航显示</lemon-button>
         <lemon-button @click="changeMessageNameVisible"
@@ -62,8 +77,9 @@
 <script>
 import packageData from '../package.json'
 import EmojiData from './database/emoji'
-import { Icon, Modal } from 'ant-design-vue'
+import { Icon, Modal, Input } from 'ant-design-vue'
 import Setting from './components/setting'
+import AddFriend from './components/addFriend.vue'
 import {
   formatConversation,
   formatContact,
@@ -81,12 +97,27 @@ export default {
   name: 'app',
   components: {
     Icon,
-    Setting
+    Setting,
+    Search: Input.Search,
+    AddFriend
   },
   data () {
     return {
       historyMessageCursor: {},
       theme: 'default',
+      scopedSlots: {
+        'sidebar-contact-fixedtop': contact => {
+          return (
+            <div class="slot-contact-fixedtop">
+              <input
+                enter-button="Search"
+                class="slot-search"
+                placeholder="搜索通讯录"
+              />
+            </div>
+          )
+        }
+      },
       contactContextmenu: [
         {
           text: '删除该聊天',
@@ -120,6 +151,11 @@ export default {
             this.$EIM.deleteContact(contact.id)
             IMUI.removeContact(contact.id)
             if (IMUI.currentContactId === contact.id) IMUI.changeContact(null)
+            this.$EIM.deleteConversation({
+              channel: contact.id,
+              chatType: contact.chatType,
+              deleteRoam: true
+            })
             hide()
           },
           color: 'red',
@@ -321,6 +357,10 @@ export default {
     })
   },
   methods: {
+    // 添加好友
+    showAddFriend () {
+      this.$refs.addFriend.showModal()
+    },
     initIMEvent () {
       this.$EIM.addEventHandler('messageEvent', {
         onTextMessage: msg => {
@@ -401,27 +441,37 @@ export default {
       this.$EIM.addEventHandler('contactEvent', {
         onContactInvited: msg => {
           // 收到好友邀请
-          if (msg.type === 'subscribe') {
-            Modal.confirm({
-              title: `${msg.from}请求添加您为好友`,
-              content: msg.status,
-              okText: '接受',
-              cancelText: '拒绝',
-              onOk: async () => {
-                this.$EIM.acceptContactInvite(msg.from)
-                let fromContact = await getConversationsInfo([
-                  formatContact(msg.from)
-                ])
-                this.$refs.IMUI.initContacts([
-                  ...this.$refs.IMUI.contacts,
-                  ...fromContact
-                ])
-              },
-              onCancel: () => {
-                this.$EIM.declineInvitation(msg.from)
-              }
-            })
-          }
+          Modal.confirm({
+            title: `${msg.from}请求添加您为好友`,
+            content: msg.status,
+            okText: '接受',
+            cancelText: '拒绝',
+            onOk: async () => {
+              this.$EIM.acceptContactInvite(msg.from)
+              let fromContact = await getConversationsInfo([
+                formatContact(msg.from)
+              ])
+              this.$refs.IMUI.initContacts([
+                ...this.$refs.IMUI.contacts,
+                ...fromContact
+              ])
+            },
+            onCancel: () => {
+              this.$EIM.declineInvitation(msg.from)
+            }
+          })
+        },
+        onContactAgreed: async msg => {
+          const { from } = msg
+          let fromContact = await getConversationsInfo([formatContact(from)])
+          this.$refs.IMUI.initContacts([
+            ...this.$refs.IMUI.getContacts(),
+            ...fromContact
+          ])
+          this.$message.success(`${from}已同意您的好友请求`)
+        },
+        onContactRefuse: msg => {
+          this.$message.info(`${msg.from}拒绝了您的好友请求`)
         }
       })
     },
@@ -871,5 +921,10 @@ pre
 }
 .lemon-simple .lemon-drawer{
   z-index:4
+}
+.sidebar-input-wrap {
+  display: flex
+  align-items: center
+  padding: 10px
 }
 </style>
