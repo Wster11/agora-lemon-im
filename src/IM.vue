@@ -62,7 +62,7 @@
 <script>
 import packageData from '../package.json'
 import EmojiData from './database/emoji'
-import { Icon } from 'ant-design-vue'
+import { Icon, Modal } from 'ant-design-vue'
 import Setting from './components/setting'
 import {
   formatConversation,
@@ -92,39 +92,32 @@ export default {
           text: '删除该聊天',
           click: (e, instance, hide) => {
             const { IMUI, contact } = instance
-            IMUI.updateContact({
-              id: contact.id,
-              lastContent: null
-            })
-            if (IMUI.currentContactId === contact.id) IMUI.changeContact(null)
-            hide()
+            this.$EIM
+              .deleteConversation({
+                channel: contact.id,
+                chatType: contact.chatType,
+                deleteRoam: true
+              })
+              .then(() => {
+                IMUI.updateContact({
+                  id: contact.id,
+                  lastContent: null
+                })
+                if (IMUI.currentContactId === contact.id) {
+                  IMUI.changeContact(null)
+                }
+                hide()
+              })
           }
         },
         {
-          text: '设置备注和标签'
-        },
-        {
-          text: '投诉'
-        },
-        {
-          icon: 'lemon-icon-message',
-          render: (h, instance, hide) => {
-            return (
-              <div style="display:flex;justify-content:space-between;align-items:center;width:130px">
-                <span>加入黑名单</span>
-                <span>
-                  <input type="checkbox" id="switch" />
-                  <label id="switch-label" for="switch">
-                    Toggle
-                  </label>
-                </span>
-              </div>
-            )
-          }
-        },
-        {
-          click (e, instance, hide) {
+          visible: instance => {
+            return instance.contact.chatType === 'singleChat'
+          },
+          click: (e, instance, hide) => {
             const { IMUI, contact } = instance
+            console.log(contact, 'contact')
+            this.$EIM.deleteContact(contact.id)
             IMUI.removeContact(contact.id)
             if (IMUI.currentContactId === contact.id) IMUI.changeContact(null)
             hide()
@@ -251,83 +244,7 @@ export default {
     }
   },
   mounted () {
-    this.$EIM.addEventHandler('message', {
-      onTextMessage: msg => {
-        let current =
-          this.$refs.IMUI.contacts.find(contact => {
-            return contact.id === msg.from
-          }) || {}
-        let isGroup = msg.chatType === CHAT_TYPE.groupChat
-        let msgFrom = {
-          id: msg.from,
-          displayName: current.displayName || msg.from,
-          avatar: current.avatar || ''
-        }
-
-        let lemonMsg = generateMessage(
-          isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
-          msgFrom,
-          msg
-        )
-        this.$refs.IMUI.appendMessage(lemonMsg)
-      },
-      onImageMessage: msg => {
-        let current =
-          this.$refs.IMUI.contacts.find(contact => {
-            return contact.id === msg.from
-          }) || {}
-        let isGroup = msg.chatType === CHAT_TYPE.groupChat
-        let msgFrom = {
-          id: msg.from,
-          displayName: current.displayName || msg.from,
-          avatar: current.avatar || ''
-        }
-
-        let lemonMsg = generateMessage(
-          isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
-          msgFrom,
-          msg
-        )
-        this.$refs.IMUI.appendMessage(lemonMsg)
-      },
-      onFileMessage: msg => {
-        let current =
-          this.$refs.IMUI.contacts.find(contact => {
-            return contact.id === msg.from
-          }) || {}
-        let isGroup = msg.chatType === CHAT_TYPE.groupChat
-        let msgFrom = {
-          id: msg.from,
-          displayName: current.displayName || msg.from,
-          avatar: current.avatar || ''
-        }
-
-        let lemonMsg = generateMessage(
-          isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
-          msgFrom,
-          msg
-        )
-        this.$refs.IMUI.appendMessage(lemonMsg)
-      },
-      onRecallMessage: msg => {
-        console.log(msg, 'msgmsgmsg')
-        const data = {
-          id: generateRandId(),
-          type: 'event',
-          // 使用 jsx 时 click必须使用箭头函数（使上下文停留在vue内）
-          content: (
-            <div>
-              <span>{msg.from}撤回了一条消息</span>
-            </div>
-          ),
-          toContactId: msg.to,
-          sendTime: getTime()
-        }
-        IMUI.removeMessage(msg.mid)
-        IMUI.appendMessage(data, true)
-      }
-    })
-
+    this.initIMEvent()
     this.initIM()
     const { IMUI } = this.$refs
     IMUI.setLastContentRender('event', message => {
@@ -404,6 +321,110 @@ export default {
     })
   },
   methods: {
+    initIMEvent () {
+      this.$EIM.addEventHandler('messageEvent', {
+        onTextMessage: msg => {
+          let current =
+            this.$refs.IMUI.contacts.find(contact => {
+              return contact.id === msg.from
+            }) || {}
+          let isGroup = msg.chatType === CHAT_TYPE.groupChat
+          let msgFrom = {
+            id: msg.from,
+            displayName: current.displayName || msg.from,
+            avatar: current.avatar || ''
+          }
+
+          let lemonMsg = generateMessage(
+            isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
+            msgFrom,
+            msg
+          )
+          this.$refs.IMUI.appendMessage(lemonMsg)
+        },
+        onImageMessage: msg => {
+          let current =
+            this.$refs.IMUI.contacts.find(contact => {
+              return contact.id === msg.from
+            }) || {}
+          let isGroup = msg.chatType === CHAT_TYPE.groupChat
+          let msgFrom = {
+            id: msg.from,
+            displayName: current.displayName || msg.from,
+            avatar: current.avatar || ''
+          }
+
+          let lemonMsg = generateMessage(
+            isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
+            msgFrom,
+            msg
+          )
+          this.$refs.IMUI.appendMessage(lemonMsg)
+        },
+        onFileMessage: msg => {
+          let current =
+            this.$refs.IMUI.contacts.find(contact => {
+              return contact.id === msg.from
+            }) || {}
+          let isGroup = msg.chatType === CHAT_TYPE.groupChat
+          let msgFrom = {
+            id: msg.from,
+            displayName: current.displayName || msg.from,
+            avatar: current.avatar || ''
+          }
+
+          let lemonMsg = generateMessage(
+            isGroup ? msg.to : msg.from === this.$EIM.user ? msg.to : msg.from,
+            msgFrom,
+            msg
+          )
+          this.$refs.IMUI.appendMessage(lemonMsg)
+        },
+        onRecallMessage: msg => {
+          const data = {
+            id: generateRandId(),
+            type: 'event',
+            // 使用 jsx 时 click必须使用箭头函数（使上下文停留在vue内）
+            content: (
+              <div>
+                <span>{msg.from}撤回了一条消息</span>
+              </div>
+            ),
+            toContactId: msg.to,
+            sendTime: getTime()
+          }
+          this.$refs.IMUI.removeMessage(msg.mid)
+          this.$refs.IMUI.appendMessage(data, true)
+        }
+      })
+
+      this.$EIM.addEventHandler('contactEvent', {
+        onContactInvited: msg => {
+          // 收到好友邀请
+          if (msg.type === 'subscribe') {
+            Modal.confirm({
+              title: `${msg.from}请求添加您为好友`,
+              content: msg.status,
+              okText: '接受',
+              cancelText: '拒绝',
+              onOk: async () => {
+                this.$EIM.acceptContactInvite(msg.from)
+                let fromContact = await getConversationsInfo([
+                  formatContact(msg.from)
+                ])
+                this.$refs.IMUI.initContacts([
+                  ...this.$refs.IMUI.contacts,
+                  ...fromContact
+                ])
+              },
+              onCancel: () => {
+                this.$EIM.declineInvitation(msg.from)
+              }
+            })
+          }
+        }
+      })
+    },
     initIM () {
       let id = this.$EIM.user
       this.$EIM.fetchUserInfoById(id).then(res => {
@@ -427,23 +448,17 @@ export default {
       )
 
       let contactsRes = await this.$EIM.getContacts()
-      let contacts = await Promise.all(
-        contactsRes.data.map(async item => {
-          let dt = await formatContact(item)
-          return dt
-        })
-      )
+      let contacts = contactsRes.data.map(item => {
+        return formatContact(item)
+      })
 
       let groupRes = await this.$EIM.getJoinedGroups({
         pageNum: 0,
         pageSize: 100
       })
-      let groups = await Promise.all(
-        groupRes.data.map(async item => {
-          let dt = await formatGroup(item.groupid)
-          return dt
-        })
-      )
+      let groups = groupRes.data.map(async item => {
+        return formatGroup(item.groupid)
+      })
 
       let uniqueConversations = uniqueFunc(
         [...conversation, ...contacts, ...groups],

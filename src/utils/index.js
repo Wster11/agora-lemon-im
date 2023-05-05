@@ -33,7 +33,7 @@ const formatConversation = async eimConversation => {
  * sdk接口获取的联系人id
  * @param {string} id
  */
-const formatContact = async id => {
+const formatContact = id => {
   return {
     id,
     isGroup: false,
@@ -49,7 +49,7 @@ const formatContact = async id => {
  * sdk接口获取的群组id
  * @param {string} id
  */
-const formatGroup = async id => {
+const formatGroup = id => {
   return {
     id,
     isGroup: false,
@@ -66,14 +66,18 @@ const formatGroup = async id => {
  */
 
 const getUsersInfo = async conversations => {
-  let conn = window.EIM
-  let res =
-    (await conn.fetchUserInfoById(
-      conversations.map(item => {
-        return item.id
-      })
-    )) || {}
-  return res.data
+  if (conversations.length) {
+    let conn = window.EIM
+    let res =
+      (await conn.fetchUserInfoById(
+        conversations.map(item => {
+          return item.id
+        })
+      )) || {}
+    return res.data
+  } else {
+    return []
+  }
 }
 
 /**
@@ -81,14 +85,18 @@ const getUsersInfo = async conversations => {
  */
 
 const getGroupsInfo = async conversations => {
-  let conn = window.EIM
-  let res =
-    (await conn.getGroupInfo({
-      groupId: conversations.map(item => {
-        return item.id
-      })
-    })) || {}
-  return res.data
+  if (conversations.length) {
+    let conn = window.EIM
+    let res =
+      (await conn.getGroupInfo({
+        groupId: conversations.map(item => {
+          return item.id
+        })
+      })) || {}
+    return res.data
+  } else {
+    return []
+  }
 }
 
 /**
@@ -108,9 +116,13 @@ const getConversationsInfo = async conversations => {
   userList.forEach(item => {
     let info = userInfos[item.id] || {}
     item.displayName = info.nickname || item.id
-    item.index = pinyin(item.displayName, {
-      pattern: 'first'
-    })[0].toUpperCase()
+    item.index =
+      pinyin(item.displayName || '', {
+        pattern: 'first'
+      }) &&
+      pinyin(item.displayName, {
+        pattern: 'first'
+      })[0].toUpperCase()
     item.avatar = info.avatarurl || ''
   })
 
