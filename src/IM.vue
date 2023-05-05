@@ -40,11 +40,11 @@
         </template>
         <template #message-title="contact">
           <span>{{ contact.displayName }}</span>
-          <small class="more" @click="changeDrawer(contact, $refs.IMUI)"
-            >{{
-              ($refs.IMUI ? $refs.IMUI.drawerVisible : false) ? "关闭" : "打开"
-            }}抽屉</small
-          >
+          <small
+            v-if="contact.isGroup"
+            @click="changeDrawer(contact, $refs.IMUI)"
+            ><Icon class="more" type="ellipsis" :style="{ fontSize: '16px' }"
+          /></small>
           <br />
         </template>
       </lemon-imui>
@@ -587,14 +587,9 @@ export default {
     },
     changeDrawer (contact, instance) {
       instance.changeDrawer({
-        // width: 240,
-        // height: "90%",
-        // offsetX:0 ,
-        // offsetY: ,
-        // position: "center",
-        // inside: true,
-        // offsetX: -280,
-        // offsetY: -100,
+        offsetY: 53,
+        height: 523,
+        position: 'rightInside',
         render: () => {
           return (
             <div class="drawer-content">
@@ -864,8 +859,8 @@ a
     border:1px solid #ddd;
     margin: 0 auto;
   .lemon-drawer
-    border:1px solid #ddd;
     border-left:0;
+    background: #fff
 .drawer-content
   padding 15px
 .more
@@ -877,13 +872,10 @@ a
   right 14px
   cursor pointer
   user-select none
-  color #f1f1f1
+  color #191919
   display inline-block
-  border-radius 4px
-  background #111
-  padding 0 8px
   &:active
-    background #999
+    color: darkgray
 .bar
   text-align center
   line-height 30px
@@ -926,5 +918,8 @@ pre
   display: flex
   align-items: center
   padding: 10px
+}
+.lemon-container__title {
+  border-bottom: 1px solid #e0e0e0
 }
 </style>
