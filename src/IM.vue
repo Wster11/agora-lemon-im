@@ -353,10 +353,7 @@ export default {
     initIMEvent () {
       this.$EIM.addEventHandler('messageEvent', {
         onTextMessage: msg => {
-          let current =
-            this.$refs.IMUI.contacts.find(contact => {
-              return contact.id === msg.from
-            }) || {}
+          let current = this.$refs.IMUI.findContact(msg.from) || {}
           let isGroup = msg.chatType === CHAT_TYPE.groupChat
           let msgFrom = {
             id: msg.from,
@@ -372,10 +369,7 @@ export default {
           this.$refs.IMUI.appendMessage(lemonMsg)
         },
         onImageMessage: msg => {
-          let current =
-            this.$refs.IMUI.contacts.find(contact => {
-              return contact.id === msg.from
-            }) || {}
+          let current = this.$refs.IMUI.findContact(msg.from) || {}
           let isGroup = msg.chatType === CHAT_TYPE.groupChat
           let msgFrom = {
             id: msg.from,
@@ -391,10 +385,7 @@ export default {
           this.$refs.IMUI.appendMessage(lemonMsg)
         },
         onFileMessage: msg => {
-          let current =
-            this.$refs.IMUI.contacts.find(contact => {
-              return contact.id === msg.from
-            }) || {}
+          let current = this.$refs.IMUI.findContact(msg.from) || {}
           let isGroup = msg.chatType === CHAT_TYPE.groupChat
           let msgFrom = {
             id: msg.from,
@@ -581,7 +572,6 @@ export default {
         position: 'rightInside',
         render: () => {
           if (!this.$refs.IMUI.drawerVisible) return false
-          let contacts = this.$refs.IMUI.getContacts()
           let members = this.currentGroupInfo.affiliations.map(item => {
             return {
               id: item.member || item.owner,
@@ -593,9 +583,7 @@ export default {
               <br />
               <div class="group-member-info-wrap">
                 {members.map(item => {
-                  let contactInfo = contacts.find(
-                    contact => contact.id === item.id
-                  )
+                  let contactInfo = this.$refs.IMUI.findContact(item.id)
                   let src = ''
                   let displayName = ''
                   if (contactInfo) {
@@ -752,9 +740,7 @@ export default {
                   let current =
                     msg.from === this.user.id
                       ? this.user
-                      : instance.contacts.find(contact => {
-                        return contact.id === msg.from
-                      }) || {}
+                      : instance.findContact(msg.from) || {}
                   let msgFrom = {
                     id: msg.from,
                     displayName: current.displayName || msg.from,
