@@ -77,7 +77,7 @@
 <script>
 import packageData from '../package.json'
 import EmojiData from './database/emoji'
-import { Icon, Modal, Input } from 'ant-design-vue'
+import { Icon, Modal, Input, Divider } from 'ant-design-vue'
 import Setting from './components/setting'
 import AddFriend from './components/addFriend.vue'
 import {
@@ -99,25 +99,17 @@ export default {
     Icon,
     Setting,
     Search: Input.Search,
-    AddFriend
+    AddFriend,
+    Divider
   },
   data () {
     return {
       historyMessageCursor: {},
       theme: 'default',
-      scopedSlots: {
-        'sidebar-contact-fixedtop': contact => {
-          return (
-            <div class="slot-contact-fixedtop">
-              <input
-                enter-button="Search"
-                class="slot-search"
-                placeholder="搜索通讯录"
-              />
-            </div>
-          )
-        }
+      currentGroupInfo: {
+        groupMembersInfo: []
       },
+
       contactContextmenu: [
         {
           text: '删除该聊天',
@@ -591,12 +583,50 @@ export default {
         height: 523,
         position: 'rightInside',
         render: () => {
+          let contacts = this.$refs.IMUI.getContacts()
+          let members = this.currentGroupInfo.affiliations.map(item => {
+            return {
+              id: item.member || item.owner,
+              isAdmin: !!item.owner
+            }
+          })
+
+          console.log(this.currentGroupInfo, 'this.currentGroupInfo')
+
           return (
             <div class="drawer-content">
-              <p>
-                <b>自定义抽屉</b>
-              </p>
-              <p>{contact.displayName}</p>
+              <br />
+              <div class="group-member-info-wrap">
+                {members.map(item => {
+                  let contactInfo = contacts.find(
+                    contact => contact.id === item.id
+                  )
+                  let src = ''
+                  let displayName = ''
+                  if (contactInfo) {
+                    src = contactInfo.avatar
+                    displayName = contactInfo.displayName
+                  } else {
+                    let memberInfo = this.currentGroupInfo.groupMembersInfo.find(
+                      member => member.id === item.id
+                    )
+                    src = memberInfo.avatar
+                    displayName = memberInfo.displayName
+                  }
+                  return (
+                    <div class="member-item-wrap">
+                      <lemon-avatar src={src}></lemon-avatar>
+                      <div class="member-name">{displayName}</div>
+                    </div>
+                  )
+                })}
+              </div>
+              <Divider />
+              <p> 群组名称：</p>
+              <p>{this.currentGroupInfo.name}</p>
+              <Divider />
+              <p> 群组详情：</p>
+              <p>{this.currentGroupInfo.description}</p>
             </div>
           )
         }
@@ -608,6 +638,31 @@ export default {
         id: contact.id,
         unread: 0
       })
+      if (contact.isGroup) {
+        this.$EIM
+          .getGroupInfo({
+            groupId: contact.id
+          })
+          .then(res => {
+            this.currentGroupInfo = res.data[0]
+            let contacts = this.$refs.IMUI.getContacts()
+            let contactIds = contacts.map(item => item.id)
+            let memberIds = this.currentGroupInfo.affiliations.map(
+              item => item.member || item.owner
+            )
+            let noContactsIds = memberIds.filter(id => {
+              return !contactIds.includes(id)
+            })
+
+            getConversationsInfo(
+              noContactsIds.map(id => {
+                return formatContact(id)
+              })
+            ).then(res => {
+              this.$set(this.currentGroupInfo, 'groupMembersInfo', res)
+            })
+          })
+      }
       instance.closeDrawer()
     },
     handleSend (message, next, file) {
@@ -921,5 +976,22 @@ pre
 }
 .lemon-container__title {
   border-bottom: 1px solid #e0e0e0
+}
+.group-member-info-wrap {
+  display flex
+  flex-flow: row wrap;
+}
+
+.member-item-wrap {
+  text-align: center
+  margin: 0 10px 10px 10px
+}
+
+.member-name{
+  margin-top: 6px
+  max-width: 32px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
