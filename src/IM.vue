@@ -486,7 +486,7 @@ export default {
         pageNum: 0,
         pageSize: 100
       })
-      let groups = groupRes.data.map(async item => {
+      let groups = groupRes.data.map(item => {
         return formatGroup(item.groupid)
       })
 
@@ -494,6 +494,7 @@ export default {
         [...conversation, ...contacts, ...groups],
         'id'
       )
+
       IMUI.initContacts(uniqueConversations)
       IMUI.initContacts(await getConversationsInfo(uniqueConversations))
     },

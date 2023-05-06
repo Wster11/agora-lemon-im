@@ -1,4 +1,4 @@
-import { CHAT_TYPE } from '../consts'
+import { CHAT_TYPE, channelIdRegex } from '../consts'
 import { pinyin } from 'pinyin-pro'
 /**
  * sdk接口获取的会话对象
@@ -52,7 +52,7 @@ const formatContact = id => {
 const formatGroup = id => {
   return {
     id,
-    isGroup: false,
+    isGroup: true,
     index: '我的群组',
     chatType: CHAT_TYPE.groupChat,
     unread: 0,
@@ -142,9 +142,9 @@ const getConversationsInfo = async conversations => {
  */
 function getConversationIdByChannelId (id) {
   if (typeof id !== 'string') return ''
-  return (
-    id.match(/support_(\S*)@|support_(\S*)/)[1] ||
-    id.match(/support_(\S*)@|support_(\S*)/)[2]
+  return (id.match(channelIdRegex)[1] || id.match(channelIdRegex)[2]).replace(
+    channelIdRegex,
+    ''
   )
 }
 

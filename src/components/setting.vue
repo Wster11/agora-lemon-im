@@ -9,34 +9,53 @@
       @ok="handleOk"
       @cancel="handleCancel"
     >
-      <div class="setting-wrap">
-        <div>
-          <Avatar :size="50" :src="user.avatar" />
-          <span> {{ user.displayName }}({{ user.id }})</span>
-        </div>
-        <Button size="small" type="danger" @click="logout">退出登录</Button>
-      </div>
-      <Form :form="form">
-        <FormItem
-          label="昵称"
-          :label-col="{ span: 3 }"
-          :wrapper-col="{ span: 20 }"
-        >
-          <Input placeholder="请输入用户昵称" v-decorator="['nickname']" />
-        </FormItem>
-        <FormItem
-          label="头像"
-          :label-col="{ span: 3 }"
-          :wrapper-col="{ span: 20 }"
-        >
-          <Input placeholder="请输入用户头像URL" v-decorator="['avatarurl']" />
-        </FormItem>
-      </Form>
+      <Tabs v-model="activeTab" size="small">
+        <TabPane key="1" tab="个人设置">
+          <div class="setting-wrap">
+            <div>
+              <Avatar :size="50" :src="user.avatar" />
+              <span> {{ user.displayName }}({{ user.id }})</span>
+            </div>
+            <Button size="small" type="danger" @click="logout">退出登录</Button>
+          </div>
+          <br />
+          <Form :form="form">
+            <FormItem
+              label="昵称"
+              :label-col="{ span: 3 }"
+              :wrapper-col="{ span: 20 }"
+            >
+              <Input placeholder="请输入用户昵称" v-decorator="['nickname']" />
+            </FormItem>
+            <FormItem
+              label="头像"
+              :label-col="{ span: 3 }"
+              :wrapper-col="{ span: 20 }"
+            >
+              <Input
+                placeholder="请输入用户头像URL"
+                v-decorator="['avatarurl']"
+              />
+            </FormItem>
+          </Form>
+        </TabPane>
+        <TabPane key="2" tab="系统设置">
+          <Form :form="settingForm">
+            <FormItem
+              label="appKey"
+              :label-col="{ span: 3 }"
+              :wrapper-col="{ span: 20 }"
+            >
+              <Input placeholder="自定义appKey"  v-decorator="['appkey', { rules: [{ required: true, message: '请填写appkey' }] }]" />
+            </FormItem>
+          </Form>
+        </TabPane>
+      </Tabs>
     </Modal>
   </div>
 </template>
 <script>
-import { Modal, Input, Avatar, Button, Form } from 'ant-design-vue'
+import { Modal, Input, Avatar, Button, Form, Tabs } from 'ant-design-vue'
 export default {
   components: {
     Modal,
@@ -44,7 +63,9 @@ export default {
     Avatar,
     Button,
     Form,
-    FormItem: Form.Item
+    FormItem: Form.Item,
+    Tabs,
+    TabPane: Tabs.TabPane
   },
   props: {
     user: {
@@ -52,13 +73,16 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+    appkey: localStorage.getItem('appkey')
   },
   data () {
     return {
       visible: false,
       confirmLoading: false,
-      form: this.$form.createForm(this, { name: 'profile' })
+      activeTab: '1',
+      form: this.$form.createForm(this, { name: 'profile' }),
+      settingForm: this.$form.createForm(this, { name: 'sysSetting' })
     }
   },
   mounted () {},
@@ -74,13 +98,17 @@ export default {
     },
     handleOk (e) {
       this.confirmLoading = true
-      let dt = this.form.getFieldsValue()
-      this.$EIM.updateUserInfo(dt).then(() => {
-        this.visible = false
-        this.confirmLoading = false
-        this.$message.success('个人信息更新成功')
-        this.$emit('updateProfile', dt)
-      })
+      if (this.activeTab === '1') {
+        let dt = this.form.getFieldsValue()
+        this.$EIM.updateUserInfo(dt).then(() => {
+          this.visible = false
+          this.confirmLoading = false
+          this.$message.success('个人信息更新成功')
+          this.$emit('updateProfile', dt)
+        })
+      } else {
+        this.logout()
+      }
     },
     handleCancel (e) {
       console.log('Clicked cancel button')
