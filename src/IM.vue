@@ -106,10 +106,7 @@ export default {
     return {
       historyMessageCursor: {},
       theme: 'default',
-      currentGroupInfo: {
-        groupMembersInfo: []
-      },
-
+      currentGroupInfo: {},
       contactContextmenu: [
         {
           text: '删除该聊天',
@@ -583,6 +580,7 @@ export default {
         height: 523,
         position: 'rightInside',
         render: () => {
+          if (!this.$refs.IMUI.drawerVisible) return false
           let contacts = this.$refs.IMUI.getContacts()
           let members = this.currentGroupInfo.affiliations.map(item => {
             return {
@@ -590,9 +588,6 @@ export default {
               isAdmin: !!item.owner
             }
           })
-
-          console.log(this.currentGroupInfo, 'this.currentGroupInfo')
-
           return (
             <div class="drawer-content">
               <br />
