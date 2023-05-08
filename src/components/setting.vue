@@ -146,7 +146,7 @@ export default {
           if (!errors & (this.appkey !== values.appkey)) {
             localStorage.setItem('appkey', values.appkey)
             this.logout()
-            window.location.href = '/login'
+            window.location.href = '/'
           }
         })
         this.confirmLoading = false
