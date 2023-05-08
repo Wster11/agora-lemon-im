@@ -6,11 +6,12 @@ import LemonIMUI from 'lemon-imui'
 import 'lemon-imui/dist/index.css'
 import conn from './initim'
 import VueClipboard from 'vue-clipboard2'
-import { message } from 'ant-design-vue'
+import { message, Modal } from 'ant-design-vue'
 
 Vue.config.productionTip = false
 Vue.use(LemonIMUI)
 Vue.use(VueClipboard)
+Vue.use(Modal)
 Vue.prototype.$EIM = conn
 Vue.prototype.$message = message
 

@@ -51,6 +51,11 @@
       <Setting
         ref="setting"
         :user="user"
+        @onThemeChange="
+          () => {
+            this.changeTheme();
+          }
+        "
         @updateProfile="updateProfile"
         @logout="
           () => {
@@ -59,7 +64,7 @@
         "
       />
       <AddFriend :IMUI="this.$refs.IMUI" ref="addFriend" />
-      <div class="action">
+      <!-- <div class="action">
         <lemon-button @click="changeMenuVisible">切换导航显示</lemon-button>
         <lemon-button @click="changeMessageNameVisible"
           >切换聊天窗口内名字显示</lemon-button
@@ -67,10 +72,7 @@
         <lemon-button @click="changeMessageTimeVisible"
           >切换聊天窗口内时间显示</lemon-button
         >
-        <lemon-button @click="changeTheme"
-          >切换主题，当前主题：{{ this.theme }}</lemon-button
-        >
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -316,8 +318,8 @@ export default {
         isBottom: true
       },
       {
-        name: 'logout',
-        title: '退出登录',
+        name: 'setting',
+        title: '设置',
         click: () => {
           this.$refs.setting.showModal()
         },
@@ -501,6 +503,7 @@ export default {
 
     changeTheme () {
       this.theme = this.theme === 'default' ? 'blue' : 'default'
+      localStorage.setItem('theme', this.theme)
     },
     scrollToTop () {
       document.body.scrollIntoView()

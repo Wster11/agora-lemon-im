@@ -46,7 +46,30 @@
               :label-col="{ span: 3 }"
               :wrapper-col="{ span: 20 }"
             >
-              <Input placeholder="自定义appKey"  v-decorator="['appkey', { rules: [{ required: true, message: '请填写appkey' }] }]" />
+              <Input
+                placeholder="自定义appKey"
+                v-decorator="[
+                  'appkey',
+                  {
+                    rules: [{ required: true, message: '请填写appkey' }],
+                    initialValue: appkey
+                  }
+                ]"
+              />
+            </FormItem>
+            <FormItem
+              label="主题"
+              :label-col="{ span: 3 }"
+              :wrapper-col="{ span: 20 }"
+            >
+              <RadioGroup v-decorator="['theme', { initialValue: theme, getValueFromEvent:onThemeChange }]">
+                <RadioButton value="default">
+                  默认
+                </RadioButton>
+                <RadioButton value="blue">
+                  Blue
+                </RadioButton>
+              </RadioGroup>
             </FormItem>
           </Form>
         </TabPane>
@@ -55,7 +78,15 @@
   </div>
 </template>
 <script>
-import { Modal, Input, Avatar, Button, Form, Tabs } from 'ant-design-vue'
+import {
+  Modal,
+  Input,
+  Avatar,
+  Button,
+  Form,
+  Tabs,
+  Radio
+} from 'ant-design-vue'
 export default {
   components: {
     Modal,
@@ -63,8 +94,10 @@ export default {
     Avatar,
     Button,
     Form,
-    FormItem: Form.Item,
     Tabs,
+    RadioGroup: Radio.Group,
+    RadioButton: Radio.Button,
+    FormItem: Form.Item,
     TabPane: Tabs.TabPane
   },
   props: {
@@ -73,14 +106,15 @@ export default {
       default: () => {
         return {}
       }
-    },
-    appkey: localStorage.getItem('appkey')
+    }
   },
   data () {
     return {
       visible: false,
       confirmLoading: false,
       activeTab: '1',
+      appkey: localStorage.getItem('appkey'),
+      theme: localStorage.getItem('theme') || 'default',
       form: this.$form.createForm(this, { name: 'profile' }),
       settingForm: this.$form.createForm(this, { name: 'sysSetting' })
     }
@@ -107,12 +141,23 @@ export default {
           this.$emit('updateProfile', dt)
         })
       } else {
-        this.logout()
+        this.visible = false
+        this.settingForm.validateFields((errors, values) => {
+          if (!errors & (this.appkey !== values.appkey)) {
+            localStorage.setItem('appkey', values.appkey)
+            this.logout()
+            window.location.href = '/login'
+          }
+        })
+        this.confirmLoading = false
       }
     },
-    handleCancel (e) {
-      console.log('Clicked cancel button')
+    handleCancel () {
       this.visible = false
+    },
+    onThemeChange (e) {
+      this.$emit('onThemeChange')
+      return e.target.value
     },
     logout () {
       this.$EIM.close()
