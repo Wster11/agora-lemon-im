@@ -798,9 +798,9 @@ export default {
 }
 
 .lemon-message-text .lemon-message__content img {
-  padding 2px;
-  width 20px;
-  height 20px;
+  padding 2px!important;
+  width 20px!important;
+  height 20px!important;
 }
 ::selection{background:#000;color:#fff;}
 body
