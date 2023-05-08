@@ -295,23 +295,7 @@ export default {
         renderContainer: () => {
           return (
             <div class="article">
-              <ul>
-                <li class="article-item">
-                  <h2>人民日报谈网红带货：产品真的值得买吗？</h2>
-                </li>
-                <li class="article-item">
-                  甘肃夏河县发生5.7级地震 暂未接到人员伤亡报告
-                </li>
-                <li class="article-item">
-                  北方多地风力仍强沙尘相伴,东北内蒙古等地迎雨雪
-                </li>
-                <li class="article-item">
-                  英货车案：越南警方采集疑死者家属DNA作比对
-                </li>
-                <li class="article-item">
-                  知名连锁咖啡店的蛋糕吃出活虫 曝光内幕太震惊
-                </li>
-              </ul>
+              <iframe style={{width: '100%', height: '100%'}} src="https:rexking.me"/>
             </div>
           )
         },
@@ -939,12 +923,8 @@ a
     font-size 18px
     color #ddd
     line-height 50px
-.article-item
-  line-height 34px
-  cursor pointer
-  &:hover
-    text-decoration underline
-    color #318efd
+.article
+  height 100%
 pre
   background #fff
   border-radius 8px
