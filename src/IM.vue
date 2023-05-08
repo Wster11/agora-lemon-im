@@ -793,9 +793,10 @@ export default {
 
 <style lang="stylus">
 .lemon-editor__emoji-item {
-  width 28px;
-  padding 2px
+  width 30px!important;
+  padding 4px!important;
 }
+
 .lemon-message-text .lemon-message__content img {
   padding 2px;
   width 20px;
