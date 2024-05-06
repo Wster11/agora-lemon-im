@@ -295,7 +295,7 @@ export default {
         renderContainer: () => {
           return (
             <div class="article">
-              <iframe style={{width: '100%', height: '100%'}} src="https:rexking.me"/>
+              <iframe style={{width: '100%', height: '100%'}} src="https:rexking.xyz"/>
             </div>
           )
         },
