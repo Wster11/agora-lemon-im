@@ -14,9 +14,10 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "agora-chat": "^1.2.2-1",
     "ant-design-vue": "^1.7.8",
-    "easemob-websdk": "^4.1.6",
-    "lemon-imui": "^1.7.6",
+    "lemon-imui": "1.7.4",
+    "pinyin-pro": "^3.20.3",
     "stylus-loader": "^3.0.2",
     "vue": "^2.5.2",
     "vue-clipboard2": "^0.3.3"

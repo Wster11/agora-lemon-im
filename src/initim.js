@@ -1,4 +1,4 @@
-import websdk from 'easemob-websdk'
+import websdk from 'agora-chat'
 import { APPKEY } from './consts'
 
 // eslint-disable-next-line new-cap

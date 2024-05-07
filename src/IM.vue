@@ -93,7 +93,7 @@ import {
   uniqueFunc,
   formatImFile
 } from './utils/index'
-import websdk from 'easemob-websdk'
+import websdk from 'agora-chat'
 import { CHAT_TYPE } from './consts'
 export default {
   name: 'app',
